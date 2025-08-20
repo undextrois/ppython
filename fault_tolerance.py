@@ -1,14 +1,12 @@
 '''
 This function demonstrates fault tolerance for a data processing task (e.g., fetching and processing sensor data), incorporating exception handling, logging, 
 and a safe fallback to ensure system stability. It follows the no-outage principle by gracefully handling failures and maintaining state integrity.
-
 '''
 import logging
 import time
 from typing import Optional
 from contextlib import contextmanager
 import requests
-
 # Configure structured logging for observability
 logging.basicConfig(
     level=logging.INFO,
@@ -16,7 +14,6 @@ logging.basicConfig(
     handlers=[logging.StreamHandler()]
 )
 logger = logging.getLogger(__name__)
-
 @contextmanager
 def timeout(seconds: int):
     """Context manager for timeout handling."""
@@ -28,7 +25,6 @@ def timeout(seconds: int):
             logger.error(f"Operation timed out after {seconds}s: {e}")
             raise TimeoutError("Operation exceeded time limit")
         raise
-
 def fetch_and_process_data(url: str, max_retries: int = 3, timeout_seconds: int = 5) -> Optional[dict]:
     """
     Fetches data from a URL and processes it with fault-tolerant mechanisms.
@@ -41,7 +37,6 @@ def fetch_and_process_data(url: str, max_retries: int = 3, timeout_seconds: int 
     """
     attempt = 0
     fallback_data = {"status": "degraded", "data": []}  # Safe fallback
-
     while attempt < max_retries:
         try:
             with timeout(timeout_seconds):
@@ -59,9 +54,7 @@ def fetch_and_process_data(url: str, max_retries: int = 3, timeout_seconds: int 
         except Exception as e:
             logger.error(f"Unexpected error: {e}. Falling back to safe mode.")
             return fallback_data
-
     return fallback_data
-
 # Example usage
 if __name__ == "__main__":
     data = fetch_and_process_data("https://example.com/api/data")
